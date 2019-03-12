@@ -1,0 +1,342 @@
+Java10
+
+Dzone
+Java 9 has changed Java's structure by introducing modular development (Project Jigsaw). Meanwhile, Java 10 will add flavors by introducing new features of its own. A few features are explained below, with snippets.
+
+Local Variable Type Inference
+Java 7 introduced the diamond operator:
+List list=new ArrayList<>();  
+But even though we have a diamond operator, there is still a lot of boilerplate code. So, Java 10 introduced var as a reserve type name to reduce verbosity. It can be used as a variable, method, and package name, but we cannot use it as a class or interface name.
+The advantage is that we no need to explicitly declare the variable type, so it reduces boilerplate code and increases readability.
+
+
+
+In the above example, we have used the var in various examples of local variable type inference.
+
+The above example describes that we can use the var reserved keyword as a variable name and method names.
+
+public class var {}
+The above example describes that var is a restricted local variable type and cannot be used for class and interface names. That should be very helpful in reducing boilerplate code.
+
+The types are inferred at compiletime and not runtime, so it will not affect performance.The resulting bytecode is the same as that with an explicit type declaration.
+
+Restrictions
+We cannot use the var on a variable without initializers.
+var i; // invalid
+
+Also, var is not allowed in a compound declaration.
+var i , j =0; //invalid
+
+And we cannot initialize with a null value for var-type variables:
+var i=null; // invalid
+
+Optional.orElseThrow() Method
+Java 10 introduced the new method orElseThrow to the Optional class. It is preferred as an alternative to the existing get method. An example below describes the working of the orElseThrow() method.
+package optional;
+
+import java.util.Optional;
+
+public class OptionalOrElseThrow {
+
+	public static void main(String[] args) {
+
+	Optional<String> opt = Optional.empty();
+		System.out.println(opt.orElseThrow());
+	}
+}
+
+Removal of Runtime.getLocalizedInputStream and getLocalizedOutputStream Methods
+Java 1o removed the getLocalizedInputStream and getLocalizedOutputStream methods from the Runtime class, as they had no uses with respect to an internalization mechanism.
+
+APIs for Creating Unmodifiable Collections
+List.copyOf, Set.copyOf, and Map.copyOf methods are added to create the instance from an existing instance.
+
+package com.soumyadeep.creatingUnmodifiableCollections;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class CreatingUnmodifiableCollections {
+
+	public static void main(String[] args) {
+
+		var list = new ArrayList<>();
+		list.add("l1");
+		list.add("l2");
+		list.add("l3");
+		list.add("l4");
+		var list1 = List.copyOf(list);
+		System.out.println(list);
+		// list1.add("l5");
+
+		var set = new HashSet<>();
+		set.add("s1");
+		set.add("s2");
+		set.add("s3");
+		set.add("s4");
+		var set1 = Set.copyOf(set);
+		System.out.println(set);
+		// set1.add("s5");
+
+		var map = new HashMap<>();
+		map.put(1, "s1");
+		map.put(2, "s2");
+		map.put(3, "s3");
+		map.put(4, "s4");
+		var map1 = Map.copyOf(map);
+		System.out.println(map);
+		// map1.put(5,"s5");
+
+	}
+}
+
+Also, toUnmodifiableList, toUnmodifiableSet, and toUnmodifiableMap have been added to the Collectors class in the Stream package, which will produce unmodifiable collections.
+
+Byte Code Generation for Enhanced For Loops
+The following example describes the generation of the following lines of code until Java 9.
+
+List data = new ArrayList<>();
+for (String b : data);
+
+In Java 10, iterator variables are declared outside for loops and initialized to the null value immediately once the operation is over, so GC can get rid of unused memory.
+
+{
+    Iterator iterator = data.iterator();
+    for (; iterator.hasNext();) 
+    {
+        String b = (String)iterator.next();
+    }
+    b = null;
+    iterator = null;
+}
+
+Relax the Removal of Finalize Methods in FileInputStreams and FileOutputStreams
+The resources used by the stream should be cleaned by calling the close method or using the try with resources feature. In the future, classes that extend the FileInputStream or FileOutputStream should modify the cleanup approach such as Cleaner instead overriding the finalize method.
+
+Removal of Deprecated Methods
+The deprecated java.security.{Certificate, Identity, IdentityScope, Signer} classes are marked for removal by setting the value of forRemoval=true in a Deprecated annotation.
+The deprecated java.security.acl is also now marked for removal by the setting the value of forRemoval=true in a Deprecated annotation. A few fields and methods in java.lang.SecurityManager are also marked for removal in this version.
+javax.security.auth.Policy is also marked for removal and features of the class are now available in java.security.Policy.
+com.sun.security.auth.** classes, which were marked for removal in JDK 9 by setting the value of forRemoval =true in a Deprecated annotation, have been removed
+
+Parallel Full GC for G1
+Java 9 made G1 as the default, and in Java 10, parallel full Garbage Collection support for G1 will improve the worst-case latencies. It parallelized the mark-sweep-compact algorithm.
+The number of threads in parallel can be controlled by the XX:ParallelGCThreads option.
+
+Removal of javah  
+The native header tool is now removed and we can generate the native header using the Java compiler with the -h option
+All the code is executed using JShell.
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+Journaldev
+Java 10 Features
+
+Java 10 is the fastest release of a java version in its 23 year history. Java has been criticized for its slow growth and evolution, but Java 10 just shattered that concept. Java 10 is a release with many futuristic changes, the scope and impact of which may not be obvious but are far fetching.
+In this article we will discuss the various features added in Java10 release. Before that, let’s go over some changes introduced to java release model.
+
+Long Term Support Model
+Starting 2017, Oracle & the Java community announced its shift to a new 6 month cadence for Java. It moved to a Long Term Support (LTS) model for Oracle Java SE products.
+
+What does this mean?
+LTS version of the products will offer premier and sustained support from Oracle and it will be targeted every 3 years.
+Each Java release is modelled after one or two major feature, these features drives the release. Any obstacle, postpones the release and late to market. Project Jigsaw was a major feature of Java 9, it pushed out the release dates a couple of times and the release was delayed by more than 1.5 years. 6 months cadence release will follow a release train. Release train will have a schedule every 6 months. Features which make the cut get boarded on the train; else they wait for the next scheduled train.
+
+Oracle JDK vs Open JDK
+In order to be more developer friendly, Oracle & Java community now promotes the OpenJDK binaries as primary JDK going forward. This is big relief from earlier days, where the JDK binaries were propriety and licensed by Oracle, which had various restrictions around redistribution. Oracle will however keep producing their JDK, but only for long term support releases. This is a move towards being more cloud & container friendly, as the open JDK binaries can be distributed as part of a container.
+
+What does this mean?
+Open JDK binaries will be released every 6 months, while Oracle JDK binaries will be releases every 3 years (LTS version).
+
+Which JDK binaries will be adopted?
+Large organizations take time to move between the versions; they cling on to the version until they can. Industry adoption for Java 6 was more than Java 7 and then Industry is gradually moving to Java 8. In my opinion LTS version will be most favoured ones by the enterprises. However, whether it would be the LTS version of Oracle JDK or the Open JDK is yet to known, partly because there’s lot going on the cloud space.
+Java 9 & 10 are non-LTS release. Java 11 which is due in September 2018 will be a LTS release.
+
+Java 10 Features
+Time-Based Release Versioning (JEP 322)
+With adoption of time based release cycle, Oracle changed the version-string scheme of the Java SE Platform and the JDK, and related versioning information, for present and future time-based release models.
+
+The new pattern of the Version number is:
+$FEATURE.$INTERIM.$UPDATE.$PATCH
+$FEATURE: counter will be incremented every 6 months and will be based on feature release versions, e.g: JDK 10, JDK 11.
+$INTERIM: counter will be incremented for non-feature releases that contain compatible bug fixes and enhancements but no incompatible changes. Usually this will be zero, as there will be no interim release in a six month period. This kept for future revision to the release model.
+$UPDATE: counter will be incremented for compatible update releases that fix security issues, regressions, and bugs in newer features. This is updated one month after the feature release and every 3 months thereafter. The April 2018 release is JDK 10.0.1, the July release is JDK 10.0.2, and so forth
+$PATCH: counter will be incremented for an emergency release to fix a critical issue.
+New API’s have been added to get these counter values programmatically. Let’s take a look;
+
+Version version = Runtime.version();
+version.feature();
+version.interim();
+version.update();
+version.patch();
+Now, let us take a look at Java launcher which returns the version information:
+
+$ java -version
+java version "10" 2018-03-20
+Java(TM) SE Runtime Environment 18.3 (build 10+46)
+Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10+46, mixed mode)
+The version number format is “10” as there’s no other counter which is other than zero. The date of release is added. 18.3 can be read as Year 2018 & 3rd Month, build 10+46 is 46th build for version 10. For a hypothetical build 93 of JDK 10.0.1, the build will be 10.0.1+93
+
+Local-Variable Type Inference (JEP 286)
+Local-Variable Type Inference is the biggest new feature in Java 10 for developers. It adds type inference to declarations of local variables with initializers. Local type inference can be used only in the following scenarios:
+
+Limited only to Local Variable with initializer
+Indexes of enhanced for loop or indexes
+Local declared in for loop
+Let’s take a look at its usage:
+
+var numbers = List.of(1, 2, 3, 4, 5); // inferred value ArrayList<String>
+// Index of Enhanced For Loop
+for (var number : numbers) {
+	System.out.println(number);
+}
+// Local variable declared in a loop
+for (var i = 0; i < numbers.size(); i++) {
+	System.out.println(numbers.get(i));
+}
+You can read more about it at our exclusive post on java 10 local variable type inference.
+
+Graal Project
+The Graal OpenJDK project grew out of the Maxine VM project. In the context of the Maxine VM, Graal demonstrated that a compiler written in Java (with all its software engineering advantages) could generate highly optimized code without compromising on compile times.
+Graal was then spun off as an OpenJDK project in 2012 to bring these properties to HotSpot.
+This goal has been achieved as evidenced by the inclusion of the Graal compiler in JDK 9 as the basis for jaotc and in JDK 10 as an experimental tier 4 just-in-time compiler. To use the latter, simply add these VM options to the java command line:
+-XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler
+Further work on integrating Graal in the OpenJDK has moved to Project Metropolis.
+Development of GraalVM technologies independent of OpenJDK can be found at https://github.com/oracle/graal and https://www.graalvm.org. Information for staying connected with the GraalVM community can be found at https://www.graalvm.org/community.
+
+GraalVM is a universal virtual machine for running applications written in JavaScript, Python, Ruby, R, JVM-based languages like Java, Scala, Kotlin, Clojure, and LLVM-based languages such as C and C++.
+GraalVM removes the isolation between programming languages and enables interoperability in a shared runtime. It can run either standalone or in the context of OpenJDK, Node.js, Oracle Database, or MySQL.
+
+Polyglot
+Zero overhead interoperability between programming languages allows you to write polyglot applications and select the best language for your task.
+Native
+Native images compiled with GraalVM ahead-of-time improve the startup time and reduce the memory footprint of JVM-based applications.
+Embeddable
+GraalVM can be embedded in both managed and native applications. There are existing integrations into OpenJDK, Node.js, Oracle Database, and MySQL.
+
+GraalVM is an extension of the Java virtual machine to support more languages and execution modes. The Graal project includes a new high performance Java compiler, itself called Graal, which can be used in a just-in-time configuration on the HotSpot VM, or in an ahead-of-time configuration on the SubstrateVM.
+One objective of Graal is to improve the performance of Java virtual machine-based languages to match the performance of native languages.[9][10] Another goal, dubbed "Project Metropolis" or "Java-on-Java", is to implement a substitute for the substantial use of C++ within HotSpot.[11] A third goal is to allow freeform mixing of code from any programming language in a single program, billed as "polyglot applications".
+
+Experimental Java-Based JIT Compiler (JEP 317)
+This feature enables the Java-based JIT compiler, Graal, to be used as an experimental JIT compiler on the Linux/x64 platform. This is by far the most futuristic inclusion in the Java 10 feature list.
+
+Graal was introduced in Java 9. It’s an alternative to the JIT compiler which we have been used to. It’s a plugin to the JVM, which means that the JIT compiler is not tied to JVM and it can be dynamically plugged in and replaced with any another plugin which JVMCI compliant (Java-Level JVM Compiler Interface). It also brings Ahead of Time (AOT) compilation in java world. It also supports polyglot language interpretation.
+
+“A Java based Just in Time Compiler written in Java to convert the java bytecode to machine code.” Is it confusing? If JVM is written in Java, then don’t you need a JVM to run the JVM? The JVM can be compiled AOT and then JIT compiler can be used within JVM it for enhancing performance through live code optimization.
+
+Graal is a complete rewrite of the JIT compiler in Java from scratch. Previous JIT complier was written in c++. It’s considered one for the final stage of evolution for any programming language.
+You can switch to Graal with following jvm parameters:
+
+-XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler
+You can learn more about Graal from Chris Seaton presentation.
+
+Application Class-Data Sharing (JEP 310)
+This feature helps in improving the startup footprint, extends the existing Class-Data Sharing (“CDS”) feature to allow application classes to be placed in the shared archive.
+
+JVM while starting performs some preliminary steps, one of which is loading classes in memory. If there are several jars having multiple classes, then the lag in the first request is clearly visible. This becomes an issue with serverless architecture, where boot time is critical. In order to bring down application startup time, Application class-data sharing can be used. The idea is to reduce footprint by sharing common class metadata across different Java processes. This can be achieved by the following 3 steps:
+
+Determining the classes to archive: Use the java launcher to create a list of files to archive, this can be achieved by the following parameters:
+
+$java -Xshare:off -XX:+UseAppCDS -XX:DumpLoadedClassList=hello.lst -cp hello.jar HelloWorld
+Creating the AppCDS archive: Use java launcher to create the archive of the list of files to be used for Application CDS, this can be achieved by following parameters:
+
+$java -Xshare:dump -XX:+UseAppCDS -XX:SharedClassListFile=hello.lst -XX:SharedArchiveFile=hello.jsa -cp hello.jar
+Using the AppCDS archive: Use Java launcher with the following parameters to use Application CDS.
+
+$java -Xshare:on -XX:+UseAppCDS -XX:SharedArchiveFile=hello.jsa -cp hello.jar HelloWorld
+
+Garbage-Collector Interface (JEP 304)
+This JEP is futuristic change. It improves the code isolation of different garbage collectors by introducing a common Garbage Collector Interface.
+This change provides better modularity to the Internal GC Code. It will help in the future for adding new GC without changing existing codebase, also help in removing or housekeeping of the previous GC.
+
+Additional Unicode Language-Tag Extensions (JEP 314)
+This feature enhances java.util.Locale and related APIs to implement additional Unicode extensions of BCP 47 language tags. As of Java SE 9, the supported BCP 47 U language-tag extensions are – ca and nu. This JEP will add support for the following additional extensions:
+cu (currency type)
+fw (first day of week)
+rg (region override)
+tz (time zone)
+In order to support these additional extensions, changes are made to various APIs to provide information based on U or additional extensions.
+java.text.DateFormat::get*Instance
+java.text.DateFormatSymbols::getInstance
+java.text.DecimalFormatSymbols::getInstance
+java.text.NumberFormat::get*Instance
+java.time.format.DateTimeFormatter::localizedBy
+java.time.format.DateTimeFormatterBuilder::getLocalizedDateTimePattern
+java.time.format.DecimalStyle::of
+java.time.temporal.WeekFields::of
+java.util.Calendar::{getFirstDayOfWeek,getMinimalDaysInWeek}
+java.util.Currency::getInstance
+java.util.Locale::getDisplayName
+java.util.spi.LocaleNameProvider
+
+Root Certificates (JEP 319)
+In order to promote OpenJDK and make it more appealing to community users, this feature provides a default set of root Certification Authority (CA) certificates in the JDK. This will also mean that both Oracle & Open JDK binaries will be functionally the same.
+Critical security components such as TLS will work by default in OpenJDK builds going forward.
+Thread-Local Handshakes (JEP 312)
+This is an internal JVM feature to improve performance.
+A handshake operation is a callback that is executed for each JavaThread while that thread is in a safepoint safe state. The callback is executed either by the thread itself or by the VM thread while keeping the thread in a blocked state.
+This feature provides a way to execute a callback on threads without performing a global VM safepoint. Make it both possible and cheap to stop individual threads and not just all threads or none.
+
+Heap Allocation on Alternative Memory Devices (JEP 316)
+Applications have become memory hungry, there’s an increase in cloud-native applications, in-memory databases, streaming applications. In order to cater to these services, there are various memory architectures available. This feature enhances the capability of HotSpot VM to allocate the Java object heap on an alternative memory device, such as an NV-DIMM, specified by the user.
+This JEP targets alternative memory devices that have the same semantics as DRAM, including the semantics of atomic operations, and can, therefore, be used instead of DRAM for the object heap without any change to existing application code.
+
+Remove the Native-Header Generation Tool – javah (JEP 313)
+This is a housekeeping change to remove javah tool from JDK. The tool functionality is added in javac as part of JDK 8, which provides ability to write native header files at the compile time rendering javah useless.
+
+Consolidate the JDK Forest into a Single Repository (JEP 296)
+Over the years there have been various Mercurial repositories in for JDK codebase. Different repositories do provide some advantage, but it also had various operational downsides. As part of this change, numerous repositories of the JDK forest are combined into a single repository in order to simplify and streamline development.
+
+API Changes
+Java 10 has added and removed (Yes It’s not a Typo) API’s.
+
+Java 9 introduced enhanced deprecation where certain API’s were marked to be removed in future releases.
+
+API’s Removed: You can find the API’s removed here.
+
+API’s Added: 73 new API’s was added in Java 10. You can find the API’s added along with comparison here.
+
+Let’s go through a few additions:
+
+List, Map & Set Interfaces are added with a static copyOf(Collection) method. Its returns an unmodifiable List, Map or Set containing the entries provided. For a List, if the given List is subsequently modified, the returned List will not reflect such modifications.
+Optional & its primitive variations get a method orElseThrow(). This is exactly same as get(), however the java doc states that it is a preferred alternative then get()
+Collectors class gets various methods for collecting unmodifiable collections (Set, List, Map)
+
+List<String> actors = new ArrayList<>();
+actors.add("Jack Nicholson");
+actors.add("Marlon Brando");
+System.out.println(actors); // prints [Jack Nicholson, Marlon Brando]
+// New API added - Creates an UnModifiable List from a List.
+List<String> copyOfActors = List.copyOf(actors);
+System.out.println(copyOfActors); // prints [Jack Nicholson, Marlon Brando]
+// copyOfActors.add("Robert De Niro"); Will generate an
+// UnsupportedOperationException
+actors.add("Robert De Niro");
+System.out.println(actors);// prints [Jack Nicholson, Marlon Brando, Robert De Niro]
+System.out.println(copyOfActors); // prints [Jack Nicholson, Marlon Brando]
+		
+String str = "";
+Optional<String> name = Optional.ofNullable(str);
+// New API added - is preferred option then get() method
+name.orElseThrow(); // same as name.get()  
+
+// New API added - Collectors.toUnmodifiableList
+List<String> collect = actors.stream().collect(Collectors.toUnmodifiableList());
+// collect.add("Tom Hanks"); // Will generate an
+// UnsupportedOperationException
+
+
+
+
+
+
+
+
+
+
+
+
